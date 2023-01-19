@@ -6,7 +6,7 @@
 /*   By: ttavares <ttavares@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 11:12:51 by ttavares          #+#    #+#             */
-/*   Updated: 2023/01/19 12:18:02 by ttavares         ###   ########.fr       */
+/*   Updated: 2023/01/19 14:35:51 by ttavares         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	main(int argc, char **argv)
 		ft_printf("Invalid input! Try: \"PID\" \"STRING\" \n");
 		return (0);
 	}
-	pid = atoi(argv[1]);
+	pid = ft_atoi(argv[1]);
 	while (argv[2][i] != '\0')
 	{
 		signal(SIGUSR1, response);

@@ -6,39 +6,55 @@
 #    By: ttavares <ttavares@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/03 11:13:01 by ttavares          #+#    #+#              #
-#    Updated: 2023/01/11 13:31:38 by ttavares         ###   ########.fr        #
+#    Updated: 2023/01/19 13:07:15 by ttavares         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRCSSERVER	= server.c
 SRCSCLIENT	= client.c
 
-OBJS	=	$(SRCS:.c=.o)
+SRCSSERVERBONUS	= server_bonus.c
+SRCSCLIENTBONUS	= client_bonus.c
 
-CC	= cc
+LIBFT	= ./libft/libft.a
+LIBFT_DIR = ./libft
+
+CC	= cc -Wall -Wextra -Werror
 RM	= rm -f
-CFLAGS	= -Wall -Wextra -Werror -I.
 
-NAME	=
 SERVER = server
 CLIENT = client
 
+SERVERBONUS = server_bonus
+CLIENTBONUS = client_bonus
+
 all:	$(SERVER) $(CLIENT)
 
-$(SERVER):
-	$(CC) $(SRCSSERVER) -o $(SERVER)
+$(LIBFT):
+	make -C $(LIBFT_DIR)
 
-$(client):
-	$(CC) $(SRCSCLIENT) -o $(client)
+$(SERVER): $(LIBFT)
+	$(CC) $(SRCSSERVER) $(LIBFT) -o $(SERVER)
+
+$(CLIENT): $(LIBFT)
+	$(CC) $(SRCSCLIENT) $(LIBFT) -o $(CLIENT)
+
+$(CLIENTBONUS): $(LIBFT)
+	$(CC) $(SRCSCLIENTBONUS) $(LIBFT) -o $(CLIENTBONUS)
+
+$(SERVERBONUS): $(LIBFT)
+	$(CC) $(SRCSSERVERBONUS) $(LIBFT) -o $(SERVERBONUS)
+
+bonus: $(SERVER) $(CLIENT) $(SERVERBONUS) $(CLIENTBONUS)
+
 
 clean:
-	$(RM) $(OBJS)
+	make clean -C $(LIBFT_DIR)
 
 fclean:	clean
-	$(RM) $(SERVER) $(CLIENT)
+	$(RM) $(SERVER) $(CLIENT) $(SERVERBONUS) $(CLIENTBONUS)
+	make fclean -C $(LIBFT_DIR)
 
 re:	fclean $(SERVER) $(CLIENT)
-
-bonus:
 
 .PHONY:	all clean fclean re bonus

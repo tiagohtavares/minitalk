@@ -1,55 +1,59 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ttavares <ttavares@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/11 11:12:47 by ttavares          #+#    #+#             */
-/*   Updated: 2023/01/19 12:40:14 by ttavares         ###   ########.fr       */
+/*   Created: 2023/01/11 11:12:51 by ttavares          #+#    #+#             */
+/*   Updated: 2023/01/19 12:18:02 by ttavares         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk_bonus.h"
 
-void	one(int signal)
+void	response(int signal)
 {
-	static char	c = 0xFF;
-	static int	total = 0;
-
 	if (signal == SIGUSR1)
-		c ^= 128 >> total;
-	else if (signal == SIGUSR2)
-		c |= 128 >> total;
-	total++;
-	if (total == 8)
+		ft_printf("Recieved! \n");
+}
+
+void	signals(char c, int pid)
+{
+	int	i;
+
+	i = 0;
+	while (i < 8)
 	{
-		if (c != 0)
-			write(1, &c, 1);
+		if (c & (128 >> i))
+			kill(pid, SIGUSR2);
 		else
-		{
-			write(1, "\n", 1);
-		}
-		total = 0;
-		c = 0xFF;
+			kill(pid, SIGUSR1);
+		i++;
+		usleep(200);
 	}
+	i = 0;
 }
 
 int	main(int argc, char **argv)
 {
 	int	pid;
+	int	i;
 
-	(void)argv;
-	if (argc != 1)
+	i = 0;
+	if (argc != 3)
 	{
-		ft_printf("Error, too many arguments! Quitting... \n");
+		ft_printf("Invalid input! Try: \"PID\" \"STRING\" \n");
 		return (0);
 	}
-	pid = getpid();
-	ft_printf("PID: %d\n", pid);
-	signal(SIGUSR1, one);
-	signal(SIGUSR2, one);
-	while (1)
-		pause();
+	pid = atoi(argv[1]);
+	while (argv[2][i] != '\0')
+	{
+		signal(SIGUSR1, response);
+		signal(SIGUSR2, response);
+		signals(argv[2][i], pid);
+		i++;
+	}
+	signals(argv[2][i], pid);
 	return (0);
 }
